@@ -1,85 +1,53 @@
 package Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Table;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
-@Entity
-@Table(name = "Posts")
-public class Post {
+public class Post implements Serializable{
+    private String poster;
+    private String time;
+    private String contentPost;
+    private String imageSrc;
+    private String amountFavorite;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long postId;
+    public String getPoster() {
+        return poster;
+    }
 
-	@Column(nullable = false)
-	private int userID;
+    public void setPoster(String poster) {
+        this.poster = poster;
+    }
 
-	@Column(name = "image_url", nullable = false, length = 255)
-	private String imageUrl;
+    public String getTime() {
+        return time;
+    }
 
-	@Column(columnDefinition = "TEXT")
-	private String caption;
+    public void setTime(String time) {
+        this.time = time;
+    }
 
-	@Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-	private LocalDateTime createdAt;
+    public String getContentPost() {
+        return contentPost;
+    }
 
-	// Constructor mặc định
-	public Post() {
-	}
+    public void setContentPost(String contentPost) {
+        this.contentPost = contentPost;
+    }
 
-	// Constructor có tham số
-	public Post(int userID, String imageUrl, String caption, LocalDateTime createdAt) {
-		this.userID = userID;
-		this.imageUrl = imageUrl;
-		this.caption = caption;
-		this.createdAt = createdAt;
-	}
+    public String getAmountFavorite() {
+        return amountFavorite;
+    }
 
-	// Getters và Setters
-	public Long getPostId() {
-		return postId;
-	}
+    public void setAmountFavorite(String amountFavorite) {
+        this.amountFavorite = amountFavorite;
+    }
 
-	public void setPostId(Long postId) {
-		this.postId = postId;
-	}
+    public String getImageSrc() {
+        return imageSrc;
+    }
 
-	public int getUserID() {
-		return userID;
-	}
+    public void setImageSrc(String imageSrc) {
+        this.imageSrc = imageSrc;
+    }
 
-	public void setUserID(int userID) {
-		this.userID = userID;
-	}
 
-	public String getImageUrl() {
-		return imageUrl;
-	}
-
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
-
-	public String getCaption() {
-		return caption;
-	}
-
-	public void setCaption(String caption) {
-		this.caption = caption;
-	}
-
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
 }

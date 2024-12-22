@@ -15,10 +15,14 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import ConnectDB.ConnectDB;
+import ConnectDB.InsertTuple;
+
 public class WebSocketServerHandler extends WebSocketServer {
 
 	// Lưu trữ kết nối của từng client theo ID
 	public static Map<Integer, WebSocket> connectedClients = new HashMap<Integer, WebSocket>();
+	private InsertTuple insertTuple = new InsertTuple();
 
 	public WebSocketServerHandler(InetSocketAddress address) {
 		super(address);
@@ -55,7 +59,14 @@ public class WebSocketServerHandler extends WebSocketServer {
 				Long receiverID = (Long) jsonObject.get("receiverID");
 				String time = (String) jsonObject.get("send_time");
 				String messageType = (String) jsonObject.get("message_type");
+
+				// phản hồi cho người nhận:
 				responseToPartner(message_content, senderID, receiverID, action, time, messageType);
+
+				// save database:
+				insertTuple.insertMessage(senderID.intValue(), receiverID.intValue(), message_content, time,
+						messageType);
+
 			} else if (action.equals("SEND_FILE_TO_SERVER")) {
 				// Xử lý khi nhận được jsonString từ sender client;
 				String file_name = (String) jsonObject.get("file_name");
@@ -77,6 +88,9 @@ public class WebSocketServerHandler extends WebSocketServer {
 				// nếu khi nào receiver muốn xem file => request đến server'd folder
 				informPartner(file_id, extension, file_name, file_path, senderID, receiverID, time, message_type);
 
+				// save file into table messages in db:
+				insertTuple.insertMessage(senderID.intValue(), receiverID.intValue(), file_name, time, message_type);
+				
 			} else if (action.equals("DOWNLOAD_FILE")) {
 				System.out.println("server nhận yêu cầu download file từ client...");
 				Long file_id = (Long) jsonObject.get("file_id");

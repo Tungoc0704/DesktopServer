@@ -20,6 +20,8 @@ module DesktopSERVER {
 	requires mail;
 	requires jbcrypt;
 	requires java.desktop;
+	requires org.apache.tomcat.embed.core;
+	
 	
 	exports Common;
 }

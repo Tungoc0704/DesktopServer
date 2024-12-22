@@ -13,7 +13,7 @@ import org.json.simple.JSONObject;
 
 import Common.UserService;
 import ConnectDB.Lists;
-import ConnectDB.NewAccount;
+import ConnectDB.InsertTuple;
 import DataSecurity.AccountSecurity;
 import Model.User;
 import Utils.EmailSender; // Class hỗ trợ gửi email
@@ -131,7 +131,7 @@ public class UserServiceImpl extends UnicastRemoteObject implements UserService 
 			String encryptEmail = accountSecurity.encryptEmail(getEmail(), accountSecurity.generateKey());
 
 			// add new account into table users in DB:
-			NewAccount updateNewAccount = new NewAccount();
+			InsertTuple updateNewAccount = new InsertTuple();
 			updateNewAccount.insertAccount(getUsername(), hashPassword, encryptEmail);
 			System.out.println("Insert new account successfully");
 

@@ -34,5 +34,4 @@ public class AccountSecurity {
 		byte[] encrypted = cipher.doFinal(email.getBytes());
 		return Base64.getEncoder().encodeToString(encrypted);
 	}
-
 }

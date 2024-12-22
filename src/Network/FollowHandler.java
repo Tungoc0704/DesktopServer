@@ -2,6 +2,9 @@ package Network;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+
+import ConnectDB.InsertTuple;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -9,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 public class FollowHandler implements HttpHandler {
+	private InsertTuple insertTuple = new InsertTuple();
 
 	@Override
 	public void handle(HttpExchange exchange) {
@@ -28,14 +32,16 @@ public class FollowHandler implements HttpHandler {
 					// Nếu state == "Follow":
 					if (((String) requestJson.get("state")).equalsIgnoreCase("Follow")) {
 						// Xử lý follow (lưu vào database table follows)
-						System.out.println("UserID " + userID + " followed UserID " + idFollowed);
-
+						insertTuple.insertFollower(userID, idFollowed);
+						
+						// gửi phản hồi cho client:
 						sendResponse(exchange, 200, "Follow succesfully");
 					}
 					// Nếu state == "Unfollow":
 					else if (((String) requestJson.get("state")).equalsIgnoreCase("Unfollow")) {
 						// remove khỏi database:
-
+						insertTuple.unfollower(userID, idFollowed);
+						
 						// thông báo unfollow thành công:
 						sendResponse(exchange, 200, "Unfollow successfully");
 					}

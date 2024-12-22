@@ -15,13 +15,19 @@ import java.rmi.registry.LocateRegistry;
 import Network.ActionSignal;
 import Network.FollowHandler;
 import Network.HandleMessage;
+import Network.LoginServiceImpl;
 import Network.PostHandler;
+import Network.ProfileServiceImpl;
 import Network.SuggestFollowHandler;
+import Network.UserSearchServiceImpl;
 import Network.UserServiceImpl;
 import Network.WebSocketServerHandler;
 
 import com.sun.net.httpserver.HttpServer;
 
+import Common.LoginService;
+import Common.ProfileService;
+import Common.UserSearchService;
 import Common.UserService;
 
 import com.sun.net.httpserver.HttpHandler;
@@ -45,10 +51,21 @@ public class Main {
 			// Khởi tạo Registry trên cổng 1099
 			LocateRegistry.createRegistry(1099);
 			System.out.println("RMI registry started on port 1099");
+			
+			LoginService loginService = new LoginServiceImpl();
+			Naming.rebind("rmi://localhost/LoginService", loginService);
 
 			// Đăng ký UserServiceImpl
 			UserService userService = new UserServiceImpl(); // Triển khai dịch vụ
 			Naming.rebind("rmi://localhost/UserService", userService); // Đăng ký với tên "UserService"
+			
+			UserSearchService service = new UserSearchServiceImpl();
+            Naming.rebind("rmi://localhost/UserSearchService", service);
+            
+            ProfileService profileService = new ProfileServiceImpl();
+            Naming.rebind("rmi://localhost/ProfileService", profileService);
+            
+            
 			System.out.println("RMI service 'UserService' is ready.");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -57,11 +74,12 @@ public class Main {
 
 		// HTTP Server
 		try {
-			HttpServer httpServer = HttpServer.create(new InetSocketAddress(8081), 0); // Server HTTP chạy port 8081
+			HttpServer httpServer = HttpServer.create(new InetSocketAddress(8081), 0);
 
-			httpServer.createContext("/api/posts", new PostHandler()); // Đặt handler cho endpoint /api/posts
+			httpServer.createContext("/api/posts", new PostHandler());
 			httpServer.createContext("/api/suggest-follows", new SuggestFollowHandler());
 			httpServer.createContext("/api/follow", new FollowHandler());
+
 
 			httpServer.setExecutor(null); // Sử dụng executor mặc định
 			httpServer.start();

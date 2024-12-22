@@ -8,7 +8,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import Model.Partner;
+import Model.Post;
 import Model.DetailMessage;
 import Model.User;
 
@@ -16,10 +20,10 @@ public class Lists {
 
 	private List<User> userList = new ArrayList();
 	private List<Partner> relevantPartners = new ArrayList<Partner>();
+	private List<Post> postList = new ArrayList<Post>();
 
 	public List<User> getUsers() throws SQLException { // users (userID, bio, username, password, email,profile_picture,
 														// created_time)
-//		ConnectDB connectDB = new ConnectDB();
 		Connection connection = null;
 		if (connection == null) {
 			try {
@@ -95,6 +99,52 @@ public class Lists {
 			e.printStackTrace();
 		}
 		return relevantPartners;
+	}
+
+	// danh sach posts:
+	public JSONArray listPost() {
+		JSONArray postJSONArray = new JSONArray();
+		try {
+			Connection connection = null;
+			if (connection == null) {
+				try {
+					Class.forName("com.mysql.cj.jdbc.Driver");
+					String url = "jdbc:mysql://localhost:3306/desktopappdb";
+					String nameConnect = "root";
+					String pass = "Ngoc@123";
+					connection = DriverManager.getConnection(url, nameConnect, pass);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+
+			String selectPosts = "select *\r\n" + "from posts p \r\n" + "inner join users u ON p.userID  = u.userID";
+			Statement stm = connection.createStatement();
+			ResultSet rss = stm.executeQuery(selectPosts);
+			while (rss.next()) {
+				JSONObject userJSON = new JSONObject();
+				userJSON.put("userID", rss.getInt("userID"));
+				userJSON.put("avatar", rss.getString("profile_picture"));
+				userJSON.put("username", rss.getString("username"));
+				userJSON.put("nickname", rss.getString("name"));
+
+				JSONObject postJSON = new JSONObject();
+				postJSON.put("caption", rss.getString("caption"));
+				postJSON.put("imageUrl", rss.getString("image_url"));
+				postJSON.put("created_at", rss.getString("created_at"));
+
+				JSONObject responseObject = new JSONObject();
+				responseObject.put("user", userJSON);
+				responseObject.put("post", postJSON);
+
+				postJSONArray.add(responseObject);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return postJSONArray;
 	}
 
 }

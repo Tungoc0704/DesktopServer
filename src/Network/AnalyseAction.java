@@ -15,10 +15,7 @@ public class AnalyseAction {
 			JSONParser parser = new JSONParser();
 			JSONObject jsonObject = (JSONObject) parser.parse(formated_JSONString);
 			String action = (String) jsonObject.get("action");
-			if (action.equals("LOGIN")) {
-				new HandleLogin().handleLogin(jsonObject, sSocket, port, addr);
-
-			} else if (action.equals("CONVERSATION")) {
+			if (action.equals("CONVERSATION")) {
 				new HandleMessage().response_relevant_partner(jsonObject, sSocket, port, addr);
 
 			} else if (action.equals("CHOOSE PARTNER")) {
